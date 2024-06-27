@@ -26,28 +26,49 @@ repositories {
 
 ext {
     set('snippetsDir', file("build/generated-snippets"))
+    set('awspringVersion', "3.1.1")
+    set('awssdkVersion', "2.26.9")
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
-
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-jooq'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    compileOnly 'org.projectlombok:lombok'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.28.0'
 
+    // Persistence Layer
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.7.5'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.1'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql:10.15.0'
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // External
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-secrets-manager'
+    implementation 'com.amazonaws.secretsmanager:aws-secretsmanager-jdbc:2.0.2'
+    implementation 'io.awspring.cloud:spring-cloud-aws-sqs'
+    implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:mediaconvert'
+    implementation 'software.amazon.awssdk:kms'
+    implementation 'software.amazon.awssdk:cloudwatchlogs'
+
+    compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
-    runtimeOnly 'org.postgresql:postgresql'
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+    testImplementation 'org.awaitility:awaitility:4.2.1'
+    testImplementation 'org.awaitility:awaitility-proxy:3.1.6'
+
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:postgresql'
 
@@ -63,3 +84,11 @@ tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
 }
+
+dependencyManagement {
+    imports {
+        mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${awspringVersion}"
+        mavenBom "software.amazon.awssdk:bom:${awssdkVersion}"
+    }
+}
+
