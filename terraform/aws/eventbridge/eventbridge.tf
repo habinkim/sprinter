@@ -24,8 +24,8 @@ resource "aws_cloudwatch_event_rule" "media_convert_complete_rule" {
 }
 
 resource "aws_cloudwatch_event_rule" "media_convert_canceled_rule" {
-  name        = "MediaConvertCancledRule"
-  description = "Triggered when MediaConvert job is cancled"
+  name        = "MediaConvertCanceledRule"
+  description = "Triggered when MediaConvert job is canceled"
   event_pattern = jsonencode({
     "source" : ["aws.mediaconvert"],
     "detail-type" : ["MediaConvert Job State Change"],
